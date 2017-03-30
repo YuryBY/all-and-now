@@ -25,11 +25,11 @@ public class MultithreadingCalculator {
   static final int COUNT = 4;
 
   public static void main( String[] args ) throws InterruptedException {
-    int[] array = new int[100__000_000];
+    int[] array = new int[100000000];
     array[1000] = 1;
-    array[40_000_000] = 2;
-    array[60_000_000] = 3;
-    array[90_000_000] = 4;
+    array[40000000] = 2;
+    array[60000000] = 3;
+    array[90000000] = 4;
     MaxValueCalculator[] maxValueCalculators = new MaxValueCalculator[COUNT];
     Thread[] threads = new Thread[COUNT];
     long t0 = System.currentTimeMillis();

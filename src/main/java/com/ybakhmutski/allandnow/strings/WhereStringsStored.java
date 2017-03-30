@@ -14,13 +14,13 @@ public class WhereStringsStored {
   }
 
   private static void internPermGenTest() {
-    for ( int i = 0; i < 100_000; i++ ) {
+    for ( int i = 0; i < 100000; i++ ) {
      String string = new String (String.valueOf( 1 )).intern();
     }
-    for ( int i = 0; i < 100_000; i++ ) {
+    for ( int i = 0; i < 100000; i++ ) {
       String string = new String (String.valueOf( 2 )).intern();
     }
-    for ( int i = 0; i < 100_000; i++ ) {
+    for ( int i = 0; i < 100000; i++ ) {
       String string = new String (String.valueOf( 3 )).intern();
     }
     Thread thread = new Thread( new Runnable() {

@@ -10,7 +10,7 @@ import java.util.Scanner;
 //Endpoint publisher
 public class HelloWorldPublisher{
 
-  static Map<Object, Integer> map = new HashMap<>();
+  static Map<Object, Integer> map = new HashMap<Object, Integer>();
 
 
   public static void main(String[] args) {
