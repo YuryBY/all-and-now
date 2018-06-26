@@ -24,87 +24,63 @@ public class OracleJDBC {
    */
   @Deprecated
   private static void test_10_6_117_14() {
+    if (!registerDriver()) return;
+
+    String url = "jdbc:oracle:thin:@10.6.117.14:1521/XE";
+    String user = "hibuser";
+    String password = "password";
+    demonstrateConnection(url, user, password);
+
+    user = "quartz";
+    demonstrateConnection(url, user, password);
+
+    user = "pentaho_operations_mart";
+    password = "pentaho_operations_mart";
+    demonstrateConnection(url, user, password);
+  }
+
+  private static boolean registerDriver() {
     try {
       Class.forName("oracle.jdbc.driver.OracleDriver");
     } catch (ClassNotFoundException e) {
 
       System.out.println("Where is your Oracle JDBC Driver?");
       e.printStackTrace();
-      return;
+      return false;
 
     }
     System.out.println("Oracle JDBC Driver Registered!");
+    return true;
+  }
 
-    Connection connection = null;
-    try {
-      connection = DriverManager.getConnection(
-          "jdbc:oracle:thin:@10.6.117.14:1521/XE", "hibuser",
-          "password");
-    } catch (SQLException e) {
-      System.out.println("Connection Failed! Check output console");
-      e.printStackTrace();
-      return;
 
-    }
-
+  private static void demonstrateConnection(String url, String user, String password) {
+    Connection connection = createConnection(url, user, password);
     if (connection != null) {
-      System.out.println("hibuser!");
-    } else {
-      System.out.println("Failed to make connection!");
-    }
-
-    try {
-      connection = DriverManager.getConnection(
-          "jdbc:oracle:thin:@10.6.117.14:1521/XE", "quartz", "password");
-    } catch (SQLException e) {
-      System.out.println("Connection Failed! Check output console");
-      e.printStackTrace();
-      return;
-    }
-
-    if (connection != null) {
-      System.out.println("quartz!");
-    } else {
-      System.out.println("Failed to make connection!");
-    }
-
-    try {
-      connection = DriverManager.getConnection(
-          "jdbc:oracle:thin:@10.6.117.14:1521/XE", "pentaho_operations_mart", "pentaho_operations_mart");
-    } catch (SQLException e) {
-      System.out.println("Connection Failed! Check output console");
-      e.printStackTrace();
-      return;
-    }
-
-    if (connection != null) {
-      System.out.println("pentaho_operations_mart!");
+      System.out.println(user + " is connected!");
     } else {
       System.out.println("Failed to make connection!");
     }
   }
 
-  private static void dmzOracle11() throws SQLException {
-    try {
-      Class.forName("oracle.jdbc.driver.OracleDriver");
-    } catch (ClassNotFoundException e) {
-      System.out.println("Where is your Oracle JDBC Driver?");
-      e.printStackTrace();
-      return;
-    }
-
-    System.out.println("Oracle JDBC Driver Registered!");
-
+  private static Connection createConnection(String url, String user, String password) {
     Connection connection = null;
-
     try {
-      connection = DriverManager.getConnection(
-              "jdbc:oracle:thin:@10.177.176.208:1521/XE", "foodmart", "foodmart");
+      connection = DriverManager.getConnection(url, user, password);
     } catch (SQLException e) {
       System.out.println("Connection Failed! Check output console");
       e.printStackTrace();
-      return;
     }
+    return connection;
+  }
+
+  private static void dmzOracle11() throws SQLException {
+    if (!registerDriver()) return;
+
+    String url = "jdbc:oracle:thin:@10.177.176.208:1521/XE";
+    String user = "foodmart";
+    String password = "foodmart";
+    Connection connection = createConnection(url, password, user);
 
     DatabaseMetaData metaData = connection.getMetaData();
 
@@ -124,14 +100,55 @@ public class OracleJDBC {
             "\t     \t  TRANSPORTABLE_EXPORT_OBJECTS b) \"TABLE_1\"";
     //sql = "select OWNER, TABLE_NAME, TABLESPACE_NAME, CLUSTER_NAME, IOT_NAME, STATUS, PCT_FREE, PCT_USED, INI_TRANS, MAX_TRANS, INITIAL_EXTENT from ALL_ALL_TABLES";
     //sql = "select OWNER from \"OWNER, TABLE_NAME, TABLESPACE_NAME, CLUSTER_NAME, IOT_NAME, STATUS, PCT_FREE, PCT_USED, INI_TRANS, MAX_TRANS, INITIAL_EXTENT from ALL_ALL_TABLES\"";
+    //sql = "select * from employee";
+    sql = "select * from EMPLOYEE";
+
     Statement stmt = connection.createStatement();
     ResultSet rs = stmt.executeQuery(sql);
+
+    ResultSetMetaData metadata = rs.getMetaData();
+    int columnCount = metadata.getColumnCount();
+    for (int i = 1; i <= columnCount; i++) {
+      System.out.println(metadata.getColumnName(i) + ", ");
+    }
+    System.out.println();
+    while (rs.next()) {
+      String row = "";
+      for (int i = 1; i <= columnCount; i++) {
+        row += rs.getString(i) + ", ";
+      }
+      System.out.println();
+
+    }
+
+    DatabaseMetaData md = connection.getMetaData();
+    /*ResultSet rs = md.getTables(null, null, "%", null);
+    while (rs.next()) {
+      System.out.println(rs.getString(3));
+    }*/
+
+//    Statement stmt = connection.createStatement();
+  //  ResultSet rs = stmt.executeQuery(sql);
+
+
+
+    // get result set meta data
+    ResultSetMetaData rsMetaData = rs.getMetaData();
+    int numberOfColumns = rsMetaData.getColumnCount();
+
+    // get the column names; column indexes start from 1
+    for (int i = 1; i < numberOfColumns + 1; i++) {
+      String columnName = rsMetaData.getColumnName(i);
+      // Get the name of the column's table name
+      String tableName = rsMetaData.getTableName(i);
+      System.out.println("column name=" + columnName + " table=" + tableName + "");
+    }
 
     while (rs.next()) {
       //Retrieve by column name
       ResultSetMetaData metaData1 = rs.getMetaData();
       for (int i = 1; i <= metaData1.getColumnCount(); i++) {
-        System.out.println(metaData1.getColumnName(i));
+        //System.out.println(metaData1.getColumnName(i));
       }
     }
     rs.close();

@@ -7,7 +7,8 @@ import org.owasp.html.Sanitizers;
  * Created by Yury_Bakhmutski on 8/10/2016.
  */
 public class Runner {
-  public static void main( String[] args ) {
+
+  public static void main(String[] args ) {
 
     sanitize();
 
